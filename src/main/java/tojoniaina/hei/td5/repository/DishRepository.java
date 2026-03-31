@@ -74,7 +74,7 @@ public class DishRepository {
         List<IngredientEntity> ingredients = new ArrayList<>();
 
         String sql = """
-                    SELECT i.id, i.name, i.price FROM ingredient i
+                    SELECT i.id, i.nom,i.categorie, i.prix FROM ingredient i
                     JOIN dish_ingredient di ON i.id = di.ingredient_id
                     WHERE di.dish_id = ?
                 """;
@@ -86,9 +86,9 @@ public class DishRepository {
             while (rs.next()) {
                 IngredientEntity ing = new IngredientEntity(
                         rs.getInt("id"),
-                        rs.getString("name"),
+                        rs.getString("nom"),
                         IngredientType.valueOf(rs.getString("categorie")),
-                        rs.getDouble("price")
+                        rs.getDouble("prix")
                 );
                 ingredients.add(ing);
             }

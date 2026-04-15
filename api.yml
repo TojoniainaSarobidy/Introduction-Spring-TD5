@@ -1,0 +1,137 @@
+openapi: 3.0.0
+info:
+  title: API de Gestion de Restaurant - HEI
+  description: Spécification des endpoints pour la gestion des ingrédients et des plats.
+  version: 1.0.0
+
+paths:
+  /ingredients:
+    get:
+      summary: Liste les ingrédients avec pagination et filtres
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Liste d'objets JSON relatifs aux ingrédients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ingredient'
+
+  /ingredients/{id}:
+    get:
+      summary: "Récupère un ingrédient par son identifiant"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Objet ingrédient trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+        '404':
+          description: Ingrédient non trouvé
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Ingredient.id={id} is not found"
+
+  /dishes:
+    get:
+      summary: Liste tous les plats avec leurs ingrédients
+      responses:
+        '200':
+          description: Liste des plats enregistrés dans la base de données
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dish'
+
+  /dishes/{id}/ingredients:
+    put:
+      summary: Modifie l'association des ingrédients à un plat
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Ingredient'
+      responses:
+        '200':
+          description: Association ou dissociation réussie
+        '400':
+          description: Corps de requête obligatoire manquant
+        '404':
+          description: Plat non trouvé
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Dish.id=$id={id} is not found"
+
+components:
+  schemas:
+    Ingredient:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+          format: double
+        category:
+          type: string
+          enum: [ VEGETABLE, ANIMAL, MARINE, DAIRY, OTHER ]
+      required:
+        - id
+        - name
+        - price
+        - category
+
+    Dish:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        dishType:
+          type: string
+          enum: [ START, MAIN, DESSERT ]
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ingredient'
+      required:
+        - id
+        - name
+        - dishType

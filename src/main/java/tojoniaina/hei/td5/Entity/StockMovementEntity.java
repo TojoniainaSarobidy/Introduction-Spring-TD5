@@ -20,7 +20,6 @@ public class StockMovementEntity {
         this.unit = unit;
         this.creationDateTime = creationDateTime;
     }
-
     public StockMovementEntity(Integer identifiant,
                                String unit,
                                Double quantite,
